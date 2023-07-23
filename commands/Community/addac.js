@@ -1,4 +1,6 @@
-const { SlashCommandBuilder } = require('discord.js');
+// ./commands/addac.js
+
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 function parseTime(timeStr) {
     let totalMinutes = 0;
@@ -57,7 +59,7 @@ module.exports = {
             option.setName('time')
                 .setDescription('Time for the AC to expire (e.g., 1d14h1m for 1 day 14 hours 1 minute)')
                 .setRequired(true)),
-    async execute(interaction, db) {
+    async execute(interaction, db, client) {
         // Access control, allow only R4 role to execute the command
         if (!interaction.member.roles.cache.some(role => role.name === 'R4')) {
             return interaction.reply({ content: 'You do not have the permission to execute this command.', ephemeral: true });
@@ -85,6 +87,14 @@ module.exports = {
                 if (err) {
                     return interaction.reply({ content: 'Failed to add the AC timer.', ephemeral: true });
                 }
+
+                const countdown = time * 60 * 1000;
+                setTimeout(async () => {
+                    const channel = await client.channels.fetch('CHANNEL_ID'); // Replace CHANNEL_ID with the ID of the #AC channel
+                    if (channel) {
+                        channel.send(`@here Level ${level} ${ACType} Analysis Center at ${coordinates} open send troops!`);
+                    }
+                }, countdown);
 
                 return interaction.reply({ content: `The AC timer was added successfully!`, ephemeral: true });
             }
