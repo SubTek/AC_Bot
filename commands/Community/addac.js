@@ -1,6 +1,4 @@
-// ./commands/addac.js
-
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('discord.js');
 
 function parseTime(timeStr) {
     let totalMinutes = 0;
